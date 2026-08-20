@@ -10,20 +10,20 @@ export function MascotOverlay({ active }: { active: boolean }) {
       aria-hidden
       className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center overflow-hidden rounded-xl grid-lines"
     >
-      <div className="absolute inset-x-0 h-24 animate-scan bg-gradient-to-b from-transparent via-primary/10 to-transparent" />
+      <div className="absolute inset-x-0 h-24 animate-scan bg-gradient-to-b from-transparent via-laser/15 to-transparent" />
       <div className="relative flex h-40 w-40 items-center justify-center">
-        <span className="absolute h-32 w-32 animate-pulse-ring rounded-full border border-primary/40" />
-        <span className="absolute h-32 w-32 rounded-full bg-primary/10 blur-2xl" />
+        <span className="absolute h-32 w-32 animate-pulse-ring rounded-full border border-laser/40" />
+        <span className="absolute h-32 w-32 rounded-full bg-laser/10 blur-2xl" />
         <img
           src={acmLogo}
           alt=""
           width={512}
           height={512}
           loading="lazy"
-          className="relative h-32 w-32 animate-float drop-shadow-[0_0_25px_oklch(0.78_0.145_187_/_0.45)]"
+          className="relative h-32 w-32 animate-float drop-shadow-[0_0_28px_oklch(0.57_0.19_252_/_0.4)]"
         />
       </div>
-      <p className="mt-6 font-mono text-xs uppercase tracking-[0.35em] text-primary">
+      <p className="mt-6 font-mono text-xs uppercase tracking-[0.35em] text-laser">
         {active ? "blind mode engaged" : "waiting for host"}
       </p>
       {active && (

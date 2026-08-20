@@ -113,13 +113,15 @@ function HostPage() {
   return (
     <main className="min-h-screen px-4 py-10 md:px-8">
       <div className="mx-auto max-w-6xl">
-        <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-primary">
+        <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-laser">
           Host control room
         </p>
-        <h1 className="mt-2 text-3xl font-semibold">Blind Coding Arena</h1>
+        <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight">
+          Blind Coding Arena
+        </h1>
 
         {!room ? (
-          <section className="mt-8 max-w-2xl space-y-5 rounded-xl border border-border bg-card/80 p-6">
+          <section className="mt-8 max-w-2xl space-y-5 rounded-2xl border border-border bg-card p-7 shadow-sm">
             <div className="space-y-2">
               <Label htmlFor="title">Problem title</Label>
               <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -151,33 +153,53 @@ function HostPage() {
         ) : (
           <>
             <section className="mt-8 grid gap-4 md:grid-cols-3">
-              <div className="rounded-xl border border-border bg-card/80 p-6">
+              <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
                 <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-muted-foreground">
                   Room code
                 </p>
-                <p className="mt-2 font-mono text-4xl tracking-[0.2em] text-primary">
-                  {room.code}
+                <p className="mt-3 font-mono text-4xl tracking-[0.18em] text-ink">{room.code}</p>
+                <p className="mt-2 truncate font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                  {room.problem_title}
                 </p>
               </div>
-              <div className="rounded-xl border border-border bg-card/80 p-6">
+              <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
                 <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-muted-foreground">
                   Timer
                 </p>
-                <p className="mt-2 font-mono text-4xl tabular-nums text-signal">
+                <p
+                  className={cn(
+                    "mt-3 font-mono text-4xl tabular-nums",
+                    room.status === "running" ? "text-laser" : "text-ink",
+                  )}
+                >
                   {remaining === null
                     ? formatClock(room.duration_seconds * 1000)
                     : formatClock(remaining)}
                 </p>
               </div>
-              <div className="rounded-xl border border-border bg-card/80 p-6">
+              <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
                 <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-muted-foreground">
                   Teams connected
                 </p>
-                <p className="mt-2 font-mono text-4xl">{teams.length}</p>
+                <p className="mt-3 font-mono text-4xl tabular-nums text-ink">{teams.length}</p>
               </div>
             </section>
 
-            <div className="mt-6 flex flex-wrap gap-3">
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <span
+                className={cn(
+                  "rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-[0.25em] ring-1",
+                  room.status === "lobby" && "bg-secondary text-ink ring-border",
+                  room.status === "running" && "bg-laser/10 text-laser ring-laser/25",
+                  room.status === "ended" && "bg-ink/5 text-ink ring-border",
+                )}
+              >
+                {room.status === "lobby"
+                  ? "Standing by"
+                  : room.status === "running"
+                    ? "Live"
+                    : "Round closed"}
+              </span>
               <Button onClick={() => void startRound()} disabled={room.status !== "lobby"}>
                 Start timer for everyone
               </Button>
@@ -193,42 +215,55 @@ function HostPage() {
               </Button>
             </div>
 
-            <section className="mt-8 overflow-hidden rounded-xl border border-border">
+            <section className="mt-8 overflow-hidden rounded-2xl border border-border bg-card">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4">
+                <h2 className="font-display text-lg font-bold tracking-tight">Team scoreboard</h2>
+                <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                  {teams.length} on the floor
+                </p>
+              </div>
               <table className="w-full text-left text-sm">
-                <thead className="bg-secondary/60 font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                <thead className="bg-secondary/70 font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
                   <tr>
-                    <th className="px-4 py-3">Team</th>
-                    <th className="px-4 py-3">Status</th>
-                    <th className="px-4 py-3">Member</th>
-                    <th className="px-4 py-3">Lives</th>
-                    <th className="px-4 py-3">Chars</th>
+                    <th className="px-5 py-3">Team</th>
+                    <th className="px-5 py-3">Status</th>
+                    <th className="px-5 py-3">Member</th>
+                    <th className="px-5 py-3">Lives</th>
+                    <th className="px-5 py-3">Chars</th>
                   </tr>
                 </thead>
                 <tbody>
                   {teams.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
+                      <td colSpan={5} className="px-5 py-10 text-center text-muted-foreground">
                         Waiting for teams to join with code {room.code}…
                       </td>
                     </tr>
                   )}
                   {teams.map((t) => (
-                    <tr key={t.id} className="border-t border-border">
-                      <td className="px-4 py-3 font-medium">{t.name}</td>
-                      <td
-                        className={cn(
-                          "px-4 py-3 font-mono text-xs",
-                          t.status === "typing" && "text-primary",
-                          t.status === "finished" && "text-signal",
-                        )}
-                      >
-                        {STATUS_LABEL[t.status] ?? t.status}
+                    <tr
+                      key={t.id}
+                      className="border-t border-border transition-colors hover:bg-secondary/40"
+                    >
+                      <td className="px-5 py-3.5 font-semibold text-ink">{t.name}</td>
+                      <td className="px-5 py-3.5">
+                        <span
+                          className={cn(
+                            "inline-flex rounded-full px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.18em] ring-1",
+                            t.status === "typing" && "bg-laser/10 text-laser ring-laser/25",
+                            t.status === "finished" && "bg-ember/10 text-ember ring-ember/30",
+                            t.status === "joined" &&
+                              "bg-secondary text-muted-foreground ring-border",
+                          )}
+                        >
+                          {STATUS_LABEL[t.status] ?? t.status}
+                        </span>
                       </td>
-                      <td className="px-4 py-3 font-mono text-xs">
+                      <td className="px-5 py-3.5 font-mono text-xs tabular-nums">
                         {t.current_member}/{MAX_LIVES}
                       </td>
-                      <td className="px-4 py-3 font-mono text-xs">{t.lives}</td>
-                      <td className="px-4 py-3 font-mono text-xs">{t.char_count}</td>
+                      <td className="px-5 py-3.5 font-mono text-xs tabular-nums">{t.lives}</td>
+                      <td className="px-5 py-3.5 font-mono text-xs tabular-nums">{t.char_count}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { loadSession, saveSession, MAX_LIVES, type Room, type Team } from "@/lib/blind";
+import { loadSession, saveSession, MAX_LIVES, TEAM_SIZE, type Room, type Team } from "@/lib/blind";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -101,65 +102,106 @@ function Index() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4 py-12">
-      <div className="grid w-full max-w-5xl gap-10 lg:grid-cols-2 lg:items-center">
+    <main className="flex min-h-screen flex-col items-center justify-center px-4 py-12 md:px-8">
+      <div className="grid w-full max-w-6xl items-center gap-14 lg:grid-cols-[1.15fr_0.85fr]">
         <div>
-          <img
-            src={acmLogo}
-            alt="SPPU ACM blindfolded owl emblem"
-            width={512}
-            height={512}
-            className="h-24 w-24 animate-float"
-          />
-          <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.35em] text-primary">
-            SPPU ACM presents
-          </p>
-          <h1 className="mt-3 text-5xl font-semibold leading-[1.05]">
-            Blind Coding
-            <span className="block text-signal">Arena</span>
+          <div className="flex items-center gap-5">
+            <div className="animate-float rounded-2xl bg-card p-2 shadow-[0_12px_30px_-18px_oklch(0.25_0.045_262_/_0.5)] ring-1 ring-border">
+              <img
+                src={acmLogo}
+                alt="SPPU ACM blindfolded owl emblem"
+                width={512}
+                height={512}
+                className="h-16 w-16 rounded-xl"
+              />
+            </div>
+            <p className="font-mono text-[11px] uppercase leading-relaxed tracking-[0.35em] text-laser">
+              SPPU ACM presents
+              <span className="mt-0.5 block text-muted-foreground tracking-[0.3em]">
+                LAN · blind round
+              </span>
+            </p>
+          </div>
+
+          <h1 className="mt-10 font-display text-6xl font-extrabold leading-[0.92] tracking-tight md:text-7xl">
+            Blind coding
+            <span className="block italic text-laser">arena.</span>
           </h1>
-          <p className="mt-5 max-w-md text-muted-foreground">
+
+          <p className="mt-6 max-w-md text-lg leading-relaxed text-muted-foreground">
             One machine. Four teammates. {MAX_LIVES} lives. Your code stays invisible until the
-            host's timer hits zero — then it is revealed, ready to compile.
+            host&apos;s timer hits zero — then it is revealed, ready to compile.
           </p>
-          <Link
-            to="/host"
-            className="mt-6 inline-block font-mono text-xs uppercase tracking-[0.2em] text-primary underline-offset-4 hover:underline"
-          >
-            I am the host →
-          </Link>
+
+          <dl className="mt-10 flex max-w-md items-stretch overflow-hidden rounded-xl border border-border bg-card">
+            {[
+              ["Members", String(TEAM_SIZE)],
+              ["Lives", String(MAX_LIVES)],
+              ["Peeking", "0"],
+            ].map(([label, value], i) => (
+              <div
+                key={label}
+                className={cn("flex-1 px-5 py-4", i > 0 && "border-l border-border")}
+              >
+                <dt className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                  {label}
+                </dt>
+                <dd className="mt-1 font-display text-2xl font-bold tabular-nums">{value}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
 
-        <section className="space-y-5 rounded-xl border border-border bg-card/80 p-7 backdrop-blur">
-          <div className="space-y-2">
-            <Label htmlFor="room">Room code</Label>
-            <Input
-              id="room"
-              value={code}
-              onChange={(e) => setCode(e.target.value.toUpperCase())}
-              placeholder="e.g. K7QM2"
-              className="font-mono text-lg tracking-[0.3em]"
-              maxLength={8}
-            />
+        <section className="rounded-3xl border border-border bg-card p-8 shadow-[0_30px_70px_-45px_oklch(0.25_0.045_262_/_0.6)]">
+          <div className="flex items-center justify-between gap-4">
+            <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-muted-foreground">
+              Entry pass
+            </p>
+            <span className="rounded-full bg-laser/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.25em] text-laser ring-1 ring-laser/25">
+              LAN round
+            </span>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="team">Team name</Label>
-            <Input
-              id="team"
-              value={team}
-              onChange={(e) => setTeam(e.target.value)}
-              placeholder="Segfault Squad"
-              onKeyDown={(e) => e.key === "Enter" && void join()}
-            />
+
+          <div className="my-7 h-px w-full bg-gradient-to-r from-border via-border to-transparent" />
+
+          <div className="space-y-5">
+            <div className="space-y-2">
+              <Label htmlFor="room">Room code</Label>
+              <Input
+                id="room"
+                value={code}
+                onChange={(e) => setCode(e.target.value.toUpperCase())}
+                placeholder="e.g. K7QM2"
+                className="font-mono text-lg tracking-[0.3em]"
+                maxLength={8}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="team">Team name</Label>
+              <Input
+                id="team"
+                value={team}
+                onChange={(e) => setTeam(e.target.value)}
+                placeholder="Segfault Squad"
+                onKeyDown={(e) => e.key === "Enter" && void join()}
+              />
+            </div>
+            <Button className="w-full" onClick={() => void join()} disabled={busy}>
+              {busy ? "Joining…" : "Enter the arena"}
+            </Button>
+            <p className="font-mono text-[11px] leading-relaxed text-muted-foreground">
+              Reloading is safe — your room, hidden code, timer and lives are restored instantly.
+            </p>
           </div>
-          <Button className="w-full" onClick={() => void join()} disabled={busy}>
-            {busy ? "Joining…" : "Enter the arena"}
-          </Button>
-          <p className="font-mono text-[11px] leading-relaxed text-muted-foreground">
-            Reloading is safe — your room, hidden code, timer and lives are restored instantly.
-          </p>
         </section>
       </div>
+
+      <Link
+        to="/host"
+        className="mt-12 inline-block font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground underline-offset-4 hover:text-laser hover:underline"
+      >
+        I&apos;m running the show →
+      </Link>
     </main>
   );
 }

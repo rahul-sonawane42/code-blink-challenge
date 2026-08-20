@@ -128,38 +128,58 @@ function PlayPage() {
     void navigate({ to: "/" });
   };
 
+  const timerTone = !live
+    ? "text-muted-foreground"
+    : remaining !== null && remaining < 60_000
+      ? "text-danger"
+      : "text-laser";
+  const timeFraction =
+    live && room && remaining !== null
+      ? Math.max(0, Math.min(1, remaining / (room.duration_seconds * 1000)))
+      : 0;
+
   if (!hydrated || !session) return null;
 
   return (
-    <main className="min-h-screen px-4 py-6 md:px-8">
-      <header className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
+    <main className="min-h-screen px-4 pb-10 pt-6 md:px-8">
+      <header className="mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-primary">
-            SPPU ACM · Blind Coding
+          <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-laser">
+            SPPU ACM · Blind coding
           </p>
-          <h1 className="text-xl font-semibold">
-            {session.teamName}{" "}
-            <span className="font-mono text-sm text-muted-foreground">
-              · room {session.roomCode}
+          <h1 className="mt-1 font-display text-2xl font-bold tracking-tight">
+            {session.teamName}
+            <span className="ml-3 align-middle font-mono text-sm font-normal text-muted-foreground">
+              room {session.roomCode}
             </span>
           </h1>
         </div>
-        <div className="flex items-center gap-6">
+        <div className="flex flex-wrap items-center gap-5">
           <LivesRow lives={session.livesLeft} current={session.currentMember} />
-          <div
-            className={cn(
-              "rounded-lg border border-border bg-card px-4 py-2 font-mono text-2xl tabular-nums",
-              live && remaining !== null && remaining < 60_000 && "border-danger text-danger",
-              live && "text-primary",
-            )}
-          >
-            {remaining === null ? "--:--" : formatClock(remaining)}
+          <div className="rounded-xl border border-border bg-card px-4 py-2 text-center shadow-sm">
+            <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground">
+              time left
+            </p>
+            <p className={cn("font-mono text-2xl leading-none tabular-nums", timerTone)}>
+              {remaining === null ? "--:--" : formatClock(remaining)}
+            </p>
           </div>
           <Button variant="ghost" size="sm" onClick={leave}>
             Leave
           </Button>
         </div>
       </header>
+
+      {live && (
+        <div className="mx-auto mt-6 max-w-7xl">
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-2">
+            <div
+              className="h-full rounded-full bg-laser transition-[width] duration-500 ease-linear"
+              style={{ width: `${timeFraction * 100}%` }}
+            />
+          </div>
+        </div>
+      )}
 
       <div
         className={cn(
@@ -169,7 +189,7 @@ function PlayPage() {
       >
         {/* Typing surface — first in DOM, but pushed after the statement while idle. */}
         <div className={cn("order-2 lg:order-1", !live && !roundOver && "hidden lg:hidden")}>
-          <div className="relative rounded-xl border border-border bg-surface/70 p-1">
+          <div className="relative overflow-hidden rounded-2xl border border-border bg-surface p-1">
             <textarea
               ref={textareaRef}
               value={session.code}
@@ -179,7 +199,7 @@ function PlayPage() {
               autoFocus
               placeholder=""
               className={cn(
-                "h-[26rem] w-full resize-none rounded-lg bg-transparent p-5 font-mono text-sm leading-relaxed outline-none",
+                "h-[26rem] w-full resize-none rounded-xl bg-transparent p-5 font-mono text-sm leading-relaxed outline-none",
                 live ? "blind-caret" : "text-foreground",
               )}
             />
@@ -194,24 +214,25 @@ function PlayPage() {
             </Button>
           </div>
           {roundOver && (
-            <div className="mt-4 rounded-xl border border-signal/40 bg-signal/5 p-4">
-              <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-signal">
-                Revealed — copy into your compiler
-              </p>
-              <pre className="mt-3 max-h-80 overflow-auto whitespace-pre-wrap font-mono text-sm">
+            <div className="mt-4 animate-ink-in rounded-2xl border border-laser/30 bg-laser/5 p-5">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-laser">
+                  Revealed — copy into your compiler
+                </p>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => {
+                    void navigator.clipboard.writeText(session.code);
+                    toast.success("Code copied");
+                  }}
+                >
+                  Copy code
+                </Button>
+              </div>
+              <pre className="mt-4 max-h-80 overflow-auto whitespace-pre-wrap rounded-xl border border-border bg-card p-4 font-mono text-sm leading-relaxed">
                 {session.code || "(nothing was typed)"}
               </pre>
-              <Button
-                variant="secondary"
-                size="sm"
-                className="mt-3"
-                onClick={() => {
-                  void navigator.clipboard.writeText(session.code);
-                  toast.success("Code copied");
-                }}
-              >
-                Copy code
-              </Button>
             </div>
           )}
         </div>
@@ -224,10 +245,10 @@ function PlayPage() {
             compact={live || roundOver}
           />
           {!live && !roundOver && (
-            <div className="mt-6 rounded-xl border border-dashed border-border p-10 text-center">
+            <div className="mt-6 rounded-2xl border border-dashed border-border bg-card/50 p-10 text-center">
               <p className="font-mono text-sm text-muted-foreground">
                 Waiting for the host to start the round
-                <span className="animate-blink">_</span>
+                <span className="animate-blink text-laser">_</span>
               </p>
             </div>
           )}
