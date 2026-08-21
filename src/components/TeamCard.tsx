@@ -1,5 +1,16 @@
 import { useMemo, useState } from "react";
-import { Check, Eye, EyeOff, HeartCrack, HeartPulse, Pencil, ShieldBan, SwatchBook, X, RotateCcw } from "lucide-react";
+import {
+  Check,
+  Eye,
+  EyeOff,
+  HeartCrack,
+  HeartPulse,
+  Pencil,
+  ShieldBan,
+  SwatchBook,
+  X,
+  RotateCcw,
+} from "lucide-react";
 
 import type { HostTeam, Team } from "@/lib/blind";
 import { cn } from "@/lib/utils";
@@ -109,15 +120,18 @@ export function TeamCard({
   return (
     <article
       className={cn(
-        "group relative overflow-hidden rounded-2xl border bg-card shadow-sm transition-shadow",
+        "group relative overflow-hidden glass-panel transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_-24px_var(--signal)]",
         live && "hover:shadow-lg",
       )}
       style={{
         borderColor: live ? undefined : "var(--border)",
       }}
     >
-      <div className="h-1.5 w-full" style={{ backgroundColor: team.color ?? "var(--ridge)" }} />
-      <div className="space-y-4 p-4">
+      <div
+        className="h-1 w-full opacity-80"
+        style={{ backgroundColor: team.color ?? "var(--signal)" }}
+      />
+      <div className="flex flex-col gap-4 p-5">
         <div className="flex items-start justify-between gap-3">
           <EditName team={team} onSave={onRename} />
           <span
@@ -133,7 +147,10 @@ export function TeamCard({
 
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-xs text-ash">
           <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: team.color ?? "var(--ridge)" }} />
+            <span
+              className="h-2.5 w-2.5 rounded-full"
+              style={{ backgroundColor: team.color ?? "var(--ridge)" }}
+            />
             {team.color ?? "—"}
           </span>
           <span>
@@ -169,9 +186,13 @@ export function TeamCard({
               className={cn(!codeHidden && "text-signal")}
             >
               {codeHidden ? (
-                <><EyeOff className="h-3.5 w-3.5" /> Show code</>
+                <>
+                  <EyeOff className="h-3.5 w-3.5" /> Show code
+                </>
               ) : (
-                <><Eye className="h-3.5 w-3.5" /> Hide code</>
+                <>
+                  <Eye className="h-3.5 w-3.5" /> Hide code
+                </>
               )}
             </Button>
             <Button size="sm" variant="ghost" onClick={() => setPicking((p) => !p)}>
@@ -187,12 +208,7 @@ export function TeamCard({
               <HeartPulse className="h-3.5 w-3.5 text-mint" />
               +1
             </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={onRemoveLife}
-              disabled={team.lives <= 0}
-            >
+            <Button size="sm" variant="ghost" onClick={onRemoveLife} disabled={team.lives <= 0}>
               <HeartCrack className="h-3.5 w-3.5 text-ember" />
               −1
             </Button>
@@ -226,7 +242,9 @@ export function TeamCard({
             {isTyping && (
               <span className="absolute right-2 top-2 flex items-center gap-1.5">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-signal" />
-                <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-signal">live</span>
+                <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-signal">
+                  live
+                </span>
               </span>
             )}
             <pre className="max-h-32 overflow-auto whitespace-pre-wrap rounded-lg border border-border bg-void/60 p-3 font-mono text-xs leading-relaxed text-bone/90">

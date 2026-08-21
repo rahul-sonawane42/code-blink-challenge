@@ -104,7 +104,8 @@ function PlayPage() {
     if (myTeam.accepted !== session.accepted) updates.accepted = myTeam.accepted;
     if (myTeam.color && myTeam.color !== session.color) updates.color = myTeam.color;
     if (myTeam.lives !== session.livesLeft) updates.livesLeft = myTeam.lives;
-    if (myTeam.current_member !== session.currentMember) updates.currentMember = myTeam.current_member;
+    if (myTeam.current_member !== session.currentMember)
+      updates.currentMember = myTeam.current_member;
     if (myTeam.status === "accepted" && session.verdictKind === "success") {
       updates.verdictKind = null;
       updates.revealed = false;
@@ -200,7 +201,9 @@ function PlayPage() {
           p_code: session.code,
           p_char_count: session.code.length,
         });
-      } catch { /* transient — ignore */ }
+      } catch {
+        /* transient — ignore */
+      }
     })();
   }, [roundOver, session, patch]);
 
@@ -262,7 +265,6 @@ function PlayPage() {
 
   const durationMs = (room?.duration_seconds ?? 600) * 1000;
 
-
   // Timer tone — use team color as default when available
   const tc = session?.color;
   const timerTone = roundOver
@@ -286,15 +288,12 @@ function PlayPage() {
   const isTimerWarn = live && displayRemaining !== null && displayRemaining < 60_000;
 
   // Progress bar color — use team color as default, override with danger/warn
-  const barColor = isTimerDanger
-    ? "bg-ember"
-    : isTimerWarn
-      ? "bg-amber"
-      : undefined; // will use inline style for team color
+  const barColor = isTimerDanger ? "bg-ember" : isTimerWarn ? "bg-amber" : undefined; // will use inline style for team color
 
-  const barStyle = !barColor && session?.color
-    ? { width: `${timeFraction * 100}%`, backgroundColor: session.color }
-    : { width: `${timeFraction * 100}%` };
+  const barStyle =
+    !barColor && session?.color
+      ? { width: `${timeFraction * 100}%`, backgroundColor: session.color }
+      : { width: `${timeFraction * 100}%` };
 
   // Team color CSS variable + colored top border + gradient bg
   const teamColorStyle = session?.color
@@ -314,11 +313,7 @@ function PlayPage() {
         ? "--:--"
         : formatClock(displayRemaining);
 
-  const timerLabel = roundOver
-    ? "ended"
-    : isPaused
-      ? "paused"
-      : "time left";
+  const timerLabel = roundOver ? "ended" : isPaused ? "paused" : "time left";
 
   if (!hydrated || !session) return null;
 
@@ -329,7 +324,10 @@ function PlayPage() {
   /* ---- Lobby: waiting for host to accept ---- */
   if (inLobby && !roundOver) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center px-4" style={teamColorStyle}>
+      <main
+        className="flex min-h-screen flex-col items-center justify-center px-4"
+        style={teamColorStyle}
+      >
         <div className="max-w-md text-center">
           <div className="mx-auto mb-6 h-20 w-20 animate-pulse rounded-2xl border border-border bg-card flex items-center justify-center">
             <span className="font-mono text-3xl text-signal">⏳</span>
@@ -358,7 +356,10 @@ function PlayPage() {
   /* ---- Code accepted: waiting for round to end ---- */
   if (codeAccepted && !roundOver) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center px-4" style={teamColorStyle}>
+      <main
+        className="flex min-h-screen flex-col items-center justify-center px-4"
+        style={teamColorStyle}
+      >
         <div className="max-w-lg text-center">
           {/* Animated success icon */}
           <div className="relative mx-auto mb-8 flex h-28 w-28 items-center justify-center">
@@ -368,9 +369,19 @@ function PlayPage() {
             />
             <span
               className="animate-pop flex h-20 w-20 items-center justify-center rounded-full"
-              style={{ backgroundColor: `color-mix(in oklch, ${tc ?? "var(--mint)"} 15%, transparent)` }}
+              style={{
+                backgroundColor: `color-mix(in oklch, ${tc ?? "var(--mint)"} 15%, transparent)`,
+              }}
             >
-              <svg className="h-10 w-10" viewBox="0 0 24 24" fill="none" stroke={tc ?? "var(--mint)"} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                className="h-10 w-10"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke={tc ?? "var(--mint)"}
+                strokeWidth={3}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </span>
@@ -382,9 +393,7 @@ function PlayPage() {
           >
             Code accepted
           </h1>
-          <p className="mt-4 text-lg text-muted-foreground">
-            The host has accepted your solution.
-          </p>
+          <p className="mt-4 text-lg text-muted-foreground">The host has accepted your solution.</p>
 
           {/* Timer still counting */}
           <div className="mx-auto mt-8 inline-flex flex-col items-center rounded-2xl border border-border bg-card px-8 py-5 shadow-sm">
@@ -405,7 +414,9 @@ function PlayPage() {
           >
             <p className="font-mono text-sm text-muted-foreground">
               Wait for the round to end to view your code
-              <span className="animate-blink" style={tc ? { color: tc } : undefined}>_</span>
+              <span className="animate-blink" style={tc ? { color: tc } : undefined}>
+                _
+              </span>
             </p>
           </div>
 
@@ -419,13 +430,10 @@ function PlayPage() {
 
   /* ---- Main game view ---- */
   return (
-    <main className="min-h-screen px-4 pb-10 pt-6 md:px-8" style={teamColorStyle}>
+    <main className="command-canvas min-h-screen px-4 pb-10 pt-5 md:px-8" style={teamColorStyle}>
       {/* Team color accent strip at top */}
       {tc && (
-        <div
-          className="fixed left-0 right-0 top-0 z-50 h-1"
-          style={{ backgroundColor: tc }}
-        />
+        <div className="fixed left-0 right-0 top-0 z-50 h-1" style={{ backgroundColor: tc }} />
       )}
 
       <header className="mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-4">
@@ -448,12 +456,18 @@ function PlayPage() {
                 className="h-3 w-3 rounded-full ring-2 ring-offset-1 ring-offset-background"
                 style={{ backgroundColor: tc }}
               />
-              <span className="font-mono text-[10px]" style={{ color: tc }}>{tc}</span>
+              <span className="font-mono text-[10px]" style={{ color: tc }}>
+                {tc}
+              </span>
             </div>
           )}
         </div>
         <div className="flex flex-wrap items-center gap-5">
-          <LivesRow lives={session.livesLeft} current={session.currentMember} maxLives={session.maxLives} />
+          <LivesRow
+            lives={session.livesLeft}
+            current={session.currentMember}
+            maxLives={session.maxLives}
+          />
           <div
             className={cn(
               "rounded-xl border bg-card px-4 py-2 text-center shadow-sm",
@@ -489,7 +503,10 @@ function PlayPage() {
         <div className="mx-auto mt-6 max-w-7xl">
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-2">
             <div
-              className={cn("h-full rounded-full transition-[width] duration-500 ease-linear", barColor)}
+              className={cn(
+                "h-full rounded-full transition-[width] duration-500 ease-linear",
+                barColor,
+              )}
               style={barStyle}
             />
           </div>
@@ -498,14 +515,21 @@ function PlayPage() {
 
       <div
         className={cn(
-          "mx-auto mt-6 grid max-w-7xl gap-6 transition-all duration-700 ease-out",
-          live || roundOver || waitingVerdict || codeAccepted ? "lg:grid-cols-[1fr_20rem]" : "lg:grid-cols-1",
+          "mx-auto mt-8 grid max-w-[1500px] gap-8 transition-all duration-700 ease-out",
+          live || roundOver || waitingVerdict || codeAccepted
+            ? "lg:grid-cols-[1fr_20rem]"
+            : "lg:grid-cols-1",
         )}
       >
         {/* Typing surface */}
-        <div className={cn("order-2 lg:order-1", !live && !roundOver && !waitingVerdict && !codeAccepted && "hidden lg:hidden")}>
+        <div
+          className={cn(
+            "order-2 lg:order-1",
+            !live && !roundOver && !waitingVerdict && !codeAccepted && "hidden lg:hidden",
+          )}
+        >
           <div
-            className="relative overflow-hidden rounded-2xl border bg-surface p-1"
+            className="relative overflow-hidden glass-panel p-1 shadow-[0_24px_80px_-40px_var(--signal)]"
             style={
               tc && (live || isPaused)
                 ? {
@@ -528,7 +552,11 @@ function PlayPage() {
               placeholder=""
               className={cn(
                 "h-[26rem] w-full resize-none rounded-xl bg-transparent p-5 font-mono text-sm leading-relaxed outline-none",
-                canType && !waitingVerdict ? "blind-caret" : roundOver || session.revealed ? "text-foreground" : "blind-caret",
+                canType && !waitingVerdict
+                  ? "blind-caret"
+                  : roundOver || session.revealed
+                    ? "text-foreground"
+                    : "blind-caret",
               )}
             />
             {live && !waitingVerdict && <MascotOverlay active />}
@@ -587,9 +615,16 @@ function PlayPage() {
           {roundOver && session.revealed && (
             <div
               className="mt-4 animate-ink-in rounded-2xl border p-5"
-              style={tc
-                ? { borderColor: `color-mix(in oklch, ${tc} 30%, transparent)`, backgroundColor: `color-mix(in oklch, ${tc} 5%, transparent)` }
-                : { borderColor: "oklch(0.72 0.15 185 / 0.3)", backgroundColor: "oklch(0.72 0.15 185 / 0.05)" }
+              style={
+                tc
+                  ? {
+                      borderColor: `color-mix(in oklch, ${tc} 30%, transparent)`,
+                      backgroundColor: `color-mix(in oklch, ${tc} 5%, transparent)`,
+                    }
+                  : {
+                      borderColor: "oklch(0.72 0.15 185 / 0.3)",
+                      backgroundColor: "oklch(0.72 0.15 185 / 0.05)",
+                    }
               }
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
@@ -627,7 +662,9 @@ function PlayPage() {
           {!live && !roundOver && !waitingVerdict && !codeAccepted && isAccepted && (
             <div
               className="mt-6 rounded-2xl border border-dashed bg-card/50 p-10 text-center"
-              style={tc ? { borderColor: `color-mix(in oklch, ${tc} 30%, transparent)` } : undefined}
+              style={
+                tc ? { borderColor: `color-mix(in oklch, ${tc} 30%, transparent)` } : undefined
+              }
             >
               <p className="font-mono text-sm text-muted-foreground">
                 {isPaused ? (
@@ -635,7 +672,9 @@ function PlayPage() {
                 ) : (
                   <>
                     Waiting for the host to start the round
-                    <span className="animate-blink" style={tc ? { color: tc } : undefined}>_</span>
+                    <span className="animate-blink" style={tc ? { color: tc } : undefined}>
+                      _
+                    </span>
                   </>
                 )}
               </p>
@@ -646,4 +685,3 @@ function PlayPage() {
     </main>
   );
 }
-

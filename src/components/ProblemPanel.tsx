@@ -11,28 +11,26 @@ export function ProblemPanel({
 }) {
   return (
     <section
-      className={cn(
-        "rounded-2xl border border-border bg-card shadow-sm transition-all duration-700 ease-out",
-        compact ? "p-5" : "p-8",
-      )}
+      className={cn("brief-panel glass-panel transition-all duration-500", compact ? "p-5" : "p-8")}
     >
-      <div className="flex items-center gap-2">
-        <span className="h-1.5 w-1.5 rounded-full bg-laser" />
-        <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-muted-foreground">
-          Problem statement
-        </p>
+      <div className="flex items-center justify-between gap-3 font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+        <span>
+          <span className="mr-2 inline-block size-1.5 rounded-full bg-signal shadow-[0_0_10px_var(--signal)]" />
+          Problem brief
+        </span>
+        <span className="text-signal">/ spec</span>
       </div>
       <h2
         className={cn(
-          "mt-3 font-display font-bold leading-tight tracking-tight transition-all duration-700",
-          compact ? "text-lg" : "text-3xl",
+          "mt-7 font-display font-bold leading-[0.95] tracking-[-0.04em]",
+          compact ? "text-2xl" : "text-4xl",
         )}
       >
         {title}
       </h2>
       <p
         className={cn(
-          "mt-4 whitespace-pre-wrap text-muted-foreground transition-all duration-700",
+          "mt-6 whitespace-pre-wrap text-muted-foreground",
           compact ? "text-xs leading-relaxed" : "text-base leading-relaxed",
         )}
       >

@@ -1,17 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import {
-  Clock,
-  Download,
-  Minus,
-  Pause,
-  Play,
-  Plus,
-  Square,
-  Timer,
-  X,
-} from "lucide-react";
+import { Clock, Download, Minus, Pause, Play, Plus, Square, Timer, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -229,55 +219,67 @@ function HostPage() {
   /* ---- Room Creation Form ---- */
   if (!hostSession || !room) {
     return (
-      <main className="min-h-screen px-4 py-10 md:px-8">
-        <div className="mx-auto max-w-3xl">
-          <p className="hud-label text-signal">Host control room</p>
-          <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight">
-            Create a room
-          </h1>
+      <main className="command-canvas min-h-screen px-5 py-6 md:px-10">
+        <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+          <div className="glass-panel p-8 lg:p-12">
+            <p className="hud-label text-signal">Host control room / create</p>
+            <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight">
+              Create a room
+            </h1>
 
-          <section className="mt-8 space-y-5 rounded-2xl border border-border bg-card p-7 shadow-sm">
-            <div className="space-y-2">
-              <Label htmlFor="title">Problem title</Label>
-              <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="statement">Problem statement</Label>
-              <Textarea
-                id="statement"
-                rows={7}
-                value={statement}
-                onChange={(e) => setStatement(e.target.value)}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
+            <section className="mt-8 space-y-5 rounded-2xl border border-border bg-card p-7 shadow-sm">
               <div className="space-y-2">
-                <Label htmlFor="minutes">Round length (minutes)</Label>
-                <Input
-                  id="minutes"
-                  type="number"
-                  min={1}
-                  max={60}
-                  value={minutes}
-                  onChange={(e) => setMinutes(Number(e.target.value))}
-                />
+                <Label htmlFor="title">Problem title</Label>
+                <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="maxLives">Lives per team</Label>
-                <Input
-                  id="maxLives"
-                  type="number"
-                  min={1}
-                  max={9}
-                  value={maxLives}
-                  onChange={(e) => setMaxLives(Number(e.target.value))}
+                <Label htmlFor="statement">Problem statement</Label>
+                <Textarea
+                  id="statement"
+                  rows={7}
+                  value={statement}
+                  onChange={(e) => setStatement(e.target.value)}
                 />
               </div>
-            </div>
-            <Button onClick={() => void createRoom()} disabled={creating} className="w-full">
-              {creating ? "Creating…" : "Create room"}
-            </Button>
-          </section>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="minutes">Round length (minutes)</Label>
+                  <Input
+                    id="minutes"
+                    type="number"
+                    min={1}
+                    max={60}
+                    value={minutes}
+                    onChange={(e) => setMinutes(Number(e.target.value))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="maxLives">Lives per team</Label>
+                  <Input
+                    id="maxLives"
+                    type="number"
+                    min={1}
+                    max={9}
+                    value={maxLives}
+                    onChange={(e) => setMaxLives(Number(e.target.value))}
+                  />
+                </div>
+              </div>
+              <Button onClick={() => void createRoom()} disabled={creating} className="w-full">
+                {creating ? "Creating…" : "Create room"}
+              </Button>
+            </section>
+          </div>
+          <aside className="hidden lg:block glass-panel min-h-64 p-8">
+            <p className="hud-label text-signal">Control brief</p>
+            <p className="mt-6 max-w-xs font-display text-3xl font-bold leading-tight">
+              Set the rules. Let the room run itself.
+            </p>
+            <p className="mt-4 font-mono text-xs leading-relaxed text-muted-foreground">
+              Your room code appears here after launch. Teams connect over the LAN and every state
+              change is synced live.
+            </p>
+          </aside>
         </div>
       </main>
     );
@@ -294,27 +296,21 @@ function HostPage() {
   const pendingTeams = teams.filter((t) => t.status === "pending");
 
   return (
-    <main className="min-h-screen px-4 py-8 md:px-8">
-      <div className="mx-auto max-w-7xl space-y-6">
+    <main className="command-canvas min-h-screen px-5 py-6 md:px-10">
+      <div className="mx-auto max-w-[1500px] space-y-8">
         {/* Header */}
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="hud-label text-signal">Host control room</p>
             <h1 className="mt-1 font-display text-3xl font-extrabold tracking-tight">
-              Room{" "}
-              <span className="font-mono tracking-[0.12em] text-signal">{room.code}</span>
+              Room <span className="font-mono tracking-[0.12em] text-signal">{room.code}</span>
             </h1>
             <p className="mt-1 font-mono text-xs text-ash truncate max-w-md">
               {room.problem_title}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={exportExcel}
-              disabled={teams.length === 0}
-            >
+            <Button variant="ghost" size="sm" onClick={exportExcel} disabled={teams.length === 0}>
               <Download className="h-4 w-4" /> Export Excel
             </Button>
             <Button variant="ghost" size="sm" onClick={closeRoom}>
@@ -324,11 +320,7 @@ function HostPage() {
         </div>
 
         {/* Timer Rail */}
-        <TimerRail
-          remaining={displayRemaining}
-          duration={durationMs}
-          status={room.status}
-        />
+        <TimerRail remaining={displayRemaining} duration={durationMs} status={room.status} />
 
         {/* Controls */}
         <div className="flex flex-wrap items-center gap-3">
@@ -388,12 +380,7 @@ function HostPage() {
 
           {/* End round */}
           {(isRunning || isPaused) && (
-            <Button
-              size="sm"
-              variant="destructive"
-              onClick={() => void endRound()}
-              disabled={busy}
-            >
+            <Button size="sm" variant="destructive" onClick={() => void endRound()} disabled={busy}>
               <Square className="h-4 w-4" /> End round
             </Button>
           )}
