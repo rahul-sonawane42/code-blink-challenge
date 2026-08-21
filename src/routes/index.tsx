@@ -131,8 +131,8 @@ function Index() {
           </div>
 
           <h1 className="mt-10 max-w-3xl font-display text-6xl font-extrabold leading-[0.88] tracking-[-0.06em] md:text-8xl">
-            Blind coding
-            <span className="block italic text-signal">arena.</span>
+            Code without
+            <span className="block italic text-signal">visibility.</span>
           </h1>
 
           <p className="mt-6 max-w-md text-lg leading-relaxed text-muted-foreground">

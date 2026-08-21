@@ -5,9 +5,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
 /*
@@ -249,12 +249,16 @@
 
   body {
     background-color: var(--color-background);
+    background-image: linear-gradient(to right, oklch(1 0 0 / 0.025) 1px, transparent 1px), linear-gradient(to bottom, oklch(1 0 0 / 0.025) 1px, transparent 1px);
+    background-size: 32px 32px;
     color: var(--color-foreground);
     font-family: var(--font-sans);
     min-width: 320px;
   }
 
   button, input, textarea { transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease; }
+  button:hover:not(:disabled) { box-shadow: 0 0 0 1px color-mix(in oklch, var(--color-signal) 22%, transparent); }
+  :focus-visible { outline: 2px solid var(--color-signal); outline-offset: 3px; }
   button:active:not(:disabled) { transform: translateY(1px); }
   ::placeholder { color: color-mix(in oklch, var(--color-muted-foreground) 75%, transparent); }
 }
