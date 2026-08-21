@@ -296,8 +296,8 @@ function HostPage() {
   const pendingTeams = teams.filter((t) => t.status === "pending");
 
   return (
-    <main className="command-canvas min-h-screen px-5 py-6 md:px-10">
-      <div className="mx-auto max-w-[1500px] space-y-8">
+    <main className="command-canvas min-h-screen px-4 py-5 md:px-8 lg:px-10">
+      <div className="mx-auto flex max-w-[1500px] flex-col gap-6">
         {/* Header */}
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>

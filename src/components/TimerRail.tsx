@@ -62,7 +62,7 @@ export function TimerRail({
   return (
     <div
       className={cn(
-        "flex items-center gap-4 rounded-2xl border border-border bg-card px-5 py-4 shadow-sm",
+        "glass-panel signal-meter flex items-center gap-4 rounded-2xl px-5 py-4 shadow-sm",
         isShaking && "timer-shake",
         className,
       )}

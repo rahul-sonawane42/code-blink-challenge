@@ -392,6 +392,39 @@
   animation: timer-shake 0.4s ease-in-out infinite;
 }
 
+@utility console-frame {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklch, var(--foreground) 10%, transparent);
+  background: linear-gradient(135deg, color-mix(in oklch, var(--surface) 94%, transparent), color-mix(in oklch, var(--void) 88%, transparent));
+  box-shadow: 0 24px 80px -48px oklch(0 0 0 / 0.9), inset 0 1px 0 color-mix(in oklch, var(--foreground) 7%, transparent);
+}
+
+@utility console-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+.console-kicker::before {
+  content: "";
+  display: inline-block;
+  width: 1.5rem;
+  height: 1px;
+  background: var(--signal);
+  box-shadow: 0 0 12px var(--signal);
+}
+
+@media (max-width: 640px) {
+  .hud-label { letter-spacing: 0.16em; }
+  .glass-panel { backdrop-filter: blur(10px); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,

@@ -120,7 +120,7 @@ export function TeamCard({
   return (
     <article
       className={cn(
-        "group relative overflow-hidden glass-panel transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_-24px_var(--signal)]",
+        "group relative overflow-hidden glass-panel rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_-24px_var(--signal)]",
         live && "hover:shadow-lg",
       )}
       style={{

@@ -430,7 +430,7 @@ function PlayPage() {
 
   /* ---- Main game view ---- */
   return (
-    <main className="command-canvas min-h-screen px-4 pb-10 pt-5 md:px-8" style={teamColorStyle}>
+    <main className="command-canvas min-h-screen px-3 pb-8 pt-3 sm:px-5 sm:pt-5 md:px-8" style={teamColorStyle}>
       {/* Team color accent strip at top */}
       {tc && (
         <div className="fixed left-0 right-0 top-0 z-50 h-1" style={{ backgroundColor: tc }} />
@@ -529,7 +529,7 @@ function PlayPage() {
           )}
         >
           <div
-            className="relative overflow-hidden glass-panel p-1 shadow-[0_24px_80px_-40px_var(--signal)]"
+            className="console-frame relative overflow-hidden rounded-2xl p-1 shadow-[0_24px_80px_-40px_var(--signal)]"
             style={
               tc && (live || isPaused)
                 ? {

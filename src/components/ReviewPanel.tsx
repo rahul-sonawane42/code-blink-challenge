@@ -36,7 +36,7 @@ export function ReviewPanel({
   }
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-amber/25 bg-card shadow-sm">
+    <section className="glass-panel overflow-hidden rounded-2xl border-amber/25 shadow-sm">
       <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-3">
         <div>
           <p className="hud-label text-amber">Judgement queue</p>
