@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { loadSession, saveSession, MAX_LIVES, TEAM_SIZE, type Room, type Team } from "@/lib/blind";
+import { loadSession, saveSession, MAX_LIVES, TEAM_SIZE } from "@/lib/blind";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
@@ -49,53 +49,56 @@ function Index() {
       toast.error("Room code and team name are required");
       return;
     }
+    if (teamName.length > 40) {
+      toast.error("Team name is too long (max 40 characters)");
+      return;
+    }
     setBusy(true);
 
-    const { data: room } = await supabase
-      .from("rooms")
-      .select("*")
-      .eq("code", roomCode)
-      .maybeSingle<Room>();
-    if (!room) {
+    // Load any previous secret for this team (reconnection)
+    const prevSession = loadSession();
+    const prevSecret =
+      prevSession?.roomCode === roomCode && prevSession?.teamName === teamName
+        ? prevSession.teamSecret
+        : null;
+
+    const { data, error } = await supabase.rpc("join_room", {
+      p_code: roomCode,
+      p_name: teamName,
+      p_prev_secret: prevSecret,
+    });
+
+    if (error || !data || !Array.isArray(data) || data.length === 0) {
       setBusy(false);
-      toast.error("No room with that code");
+      toast.error(error?.message ?? "Could not join");
       return;
     }
 
-    const { data: existing } = await supabase
-      .from("teams")
-      .select("*")
-      .eq("room_id", room.id)
-      .eq("name", teamName)
-      .maybeSingle<Team>();
-
-    let record = existing;
-    if (!record) {
-      const { data, error } = await supabase
-        .from("teams")
-        .insert({ room_id: room.id, name: teamName })
-        .select()
-        .single<Team>();
-      if (error || !data) {
-        setBusy(false);
-        toast.error(error?.message ?? "Could not join");
-        return;
-      }
-      record = data;
-    }
+    const row = data[0] as {
+      team_id: string;
+      room_id: string;
+      team_secret: string;
+      room_code: string;
+      max_lives: number;
+      lives: number;
+    };
 
     saveSession({
-      roomCode: room.code,
-      teamId: record.id,
-      teamName: record.name,
+      roomCode: row.room_code,
+      roomId: row.room_id,
+      teamId: row.team_id,
+      teamName,
+      teamSecret: row.team_secret,
       code: "",
-      deadline:
-        room.status === "running" && room.started_at
-          ? new Date(room.started_at).getTime() + room.duration_seconds * 1000
-          : null,
-      livesLeft: record.lives,
-      currentMember: record.current_member,
+      deadline: null,
+      livesLeft: row.lives,
+      maxLives: row.max_lives,
+      currentMember: 1,
       revealed: false,
+      color: null,
+      accepted: false,
+      pendingSubmissionId: null,
+      verdictKind: null,
     });
     setBusy(false);
     void navigate({ to: "/play" });
@@ -106,7 +109,7 @@ function Index() {
       <div className="grid w-full max-w-6xl items-center gap-14 lg:grid-cols-[1.15fr_0.85fr]">
         <div>
           <div className="flex items-center gap-5">
-            <div className="animate-float rounded-2xl bg-card p-2 shadow-[0_12px_30px_-18px_oklch(0.25_0.045_262_/_0.5)] ring-1 ring-border">
+            <div className="animate-float rounded-2xl bg-card p-2 shadow-[0_12px_30px_-18px_oklch(0.72_0.15_185_/_0.3)] ring-1 ring-border">
               <img
                 src={acmLogo}
                 alt="SPPU ACM blindfolded owl emblem"
@@ -115,7 +118,7 @@ function Index() {
                 className="h-16 w-16 rounded-xl"
               />
             </div>
-            <p className="font-mono text-[11px] uppercase leading-relaxed tracking-[0.35em] text-laser">
+            <p className="font-mono text-[11px] uppercase leading-relaxed tracking-[0.35em] text-signal">
               SPPU ACM presents
               <span className="mt-0.5 block text-muted-foreground tracking-[0.3em]">
                 LAN · blind round
@@ -125,7 +128,7 @@ function Index() {
 
           <h1 className="mt-10 font-display text-6xl font-extrabold leading-[0.92] tracking-tight md:text-7xl">
             Blind coding
-            <span className="block italic text-laser">arena.</span>
+            <span className="block italic text-signal">arena.</span>
           </h1>
 
           <p className="mt-6 max-w-md text-lg leading-relaxed text-muted-foreground">
@@ -152,12 +155,12 @@ function Index() {
           </dl>
         </div>
 
-        <section className="rounded-3xl border border-border bg-card p-8 shadow-[0_30px_70px_-45px_oklch(0.25_0.045_262_/_0.6)]">
+        <section className="rounded-3xl border border-border bg-card p-8 shadow-[0_30px_70px_-45px_oklch(0.72_0.15_185_/_0.15)]">
           <div className="flex items-center justify-between gap-4">
             <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-muted-foreground">
               Entry pass
             </p>
-            <span className="rounded-full bg-laser/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.25em] text-laser ring-1 ring-laser/25">
+            <span className="rounded-full bg-signal/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.25em] text-signal ring-1 ring-signal/25">
               LAN round
             </span>
           </div>
@@ -183,6 +186,7 @@ function Index() {
                 value={team}
                 onChange={(e) => setTeam(e.target.value)}
                 placeholder="Segfault Squad"
+                maxLength={40}
                 onKeyDown={(e) => e.key === "Enter" && void join()}
               />
             </div>
@@ -198,7 +202,7 @@ function Index() {
 
       <Link
         to="/host"
-        className="mt-12 inline-block font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground underline-offset-4 hover:text-laser hover:underline"
+        className="mt-12 inline-block font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground underline-offset-4 hover:text-signal hover:underline"
       >
         I&apos;m running the show →
       </Link>

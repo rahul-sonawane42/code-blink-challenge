@@ -20,7 +20,7 @@ export function MascotOverlay({ active }: { active: boolean }) {
           width={512}
           height={512}
           loading="lazy"
-          className="relative h-32 w-32 animate-float drop-shadow-[0_0_28px_oklch(0.57_0.19_252_/_0.4)]"
+          className="relative h-32 w-32 animate-float drop-shadow-[0_0_28px_oklch(0.72_0.15_185_/_0.4)]"
         />
       </div>
       <p className="mt-6 font-mono text-xs uppercase tracking-[0.35em] text-laser">

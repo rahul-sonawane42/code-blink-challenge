@@ -10,9 +10,10 @@ export function useCountdown(deadline: number | null) {
 
   useEffect(() => {
     if (deadline === null) return;
+    if (typeof window === "undefined") return;
     setNow(Date.now());
-    const id = window.setInterval(() => setNow(Date.now()), 250);
-    return () => window.clearInterval(id);
+    const id = setInterval(() => setNow(Date.now()), 250);
+    return () => clearInterval(id);
   }, [deadline]);
 
   const remaining = deadline === null ? null : Math.max(0, deadline - now);
