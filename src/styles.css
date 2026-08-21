@@ -11,19 +11,10 @@
 }
 
 /*
- * Design system — "dark arena floor"
+ * Design system — "signal command"
  *
- * All colors use oklch. The palette is anchored around a deep blue-charcoal
- * with teal/mint/amber/ember accents for status feedback.
- *
- *   void   near-black ground
- *   bone   warm off-white text
- *   ash    muted mid-gray labels
- *   ridge  raised dark surface
- *   signal electric teal (live / active)
- *   ember  red-coral (danger / lives lost)
- *   mint   success green
- *   amber  warning yellow-orange
+ * A monochrome operations console with one energetic lime signal. Status
+ * states stay legible through contrast, labels, and motion—not extra colors.
  */
 
 @theme inline {
@@ -140,14 +131,14 @@
   --radius: 0.625rem;
 
   /* Named palette */
-  --void: oklch(0.13 0.01 260);
-  --bone: oklch(0.92 0.01 90);
-  --ash: oklch(0.55 0.015 260);
-  --ridge: oklch(0.22 0.015 260);
-  --signal: oklch(0.72 0.15 185);
-  --ember: oklch(0.65 0.2 25);
-  --mint: oklch(0.78 0.14 160);
-  --amber: oklch(0.78 0.14 75);
+  --void: oklch(0.10 0.008 260);
+  --bone: oklch(0.96 0.005 100);
+  --ash: oklch(0.62 0.012 260);
+  --ridge: oklch(0.18 0.012 260);
+  --signal: oklch(0.88 0.22 125);
+  --ember: oklch(0.68 0.18 25);
+  --mint: var(--signal);
+  --amber: var(--signal);
 
   /* Legacy aliases kept for existing code */
   --paper: var(--bone);
@@ -155,16 +146,16 @@
   --laser: var(--signal);
 
   /* Semantic tokens */
-  --background: oklch(0.14 0.01 260);
-  --foreground: oklch(0.92 0.01 90);
-  --surface: oklch(0.16 0.01 260);
-  --surface-2: oklch(0.22 0.015 260);
-  --card: oklch(0.18 0.015 260);
+  --background: oklch(0.10 0.008 260);
+  --foreground: oklch(0.96 0.005 100);
+  --surface: oklch(0.13 0.01 260);
+  --surface-2: oklch(0.18 0.012 260);
+  --card: oklch(0.145 0.012 260);
   --card-foreground: oklch(0.92 0.01 90);
   --popover: oklch(0.18 0.015 260);
   --popover-foreground: oklch(0.92 0.01 90);
-  --primary: oklch(0.72 0.15 185);
-  --primary-foreground: oklch(0.13 0.01 260);
+  --primary: oklch(0.88 0.22 125);
+  --primary-foreground: oklch(0.10 0.008 260);
   --secondary: oklch(0.22 0.015 260);
   --secondary-foreground: oklch(0.92 0.01 90);
   --muted: oklch(0.22 0.015 260);
@@ -198,27 +189,27 @@
 
 /* Keep .dark class for any component that checks — same values */
 .dark {
-  --void: oklch(0.13 0.01 260);
-  --bone: oklch(0.92 0.01 90);
-  --ash: oklch(0.55 0.015 260);
-  --ridge: oklch(0.22 0.015 260);
-  --signal: oklch(0.72 0.15 185);
-  --ember: oklch(0.65 0.2 25);
-  --mint: oklch(0.78 0.14 160);
-  --amber: oklch(0.78 0.14 75);
+  --void: oklch(0.10 0.008 260);
+  --bone: oklch(0.96 0.005 100);
+  --ash: oklch(0.62 0.012 260);
+  --ridge: oklch(0.18 0.012 260);
+  --signal: oklch(0.88 0.22 125);
+  --ember: oklch(0.68 0.18 25);
+  --mint: var(--signal);
+  --amber: var(--signal);
   --paper: var(--bone);
   --ink: var(--void);
   --laser: var(--signal);
-  --background: oklch(0.14 0.01 260);
-  --foreground: oklch(0.92 0.01 90);
-  --surface: oklch(0.16 0.01 260);
-  --surface-2: oklch(0.22 0.015 260);
-  --card: oklch(0.18 0.015 260);
+  --background: oklch(0.10 0.008 260);
+  --foreground: oklch(0.96 0.005 100);
+  --surface: oklch(0.13 0.01 260);
+  --surface-2: oklch(0.18 0.012 260);
+  --card: oklch(0.145 0.012 260);
   --card-foreground: oklch(0.92 0.01 90);
   --popover: oklch(0.18 0.015 260);
   --popover-foreground: oklch(0.92 0.01 90);
-  --primary: oklch(0.72 0.15 185);
-  --primary-foreground: oklch(0.13 0.01 260);
+  --primary: oklch(0.88 0.22 125);
+  --primary-foreground: oklch(0.10 0.008 260);
   --secondary: oklch(0.22 0.015 260);
   --secondary-foreground: oklch(0.92 0.01 90);
   --muted: oklch(0.22 0.015 260);
@@ -260,7 +251,12 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    min-width: 320px;
   }
+
+  button, input, textarea { transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease; }
+  button:active:not(:disabled) { transform: translateY(1px); }
+  ::placeholder { color: color-mix(in oklch, var(--color-muted-foreground) 75%, transparent); }
 }
 
 @utility grid-lines {

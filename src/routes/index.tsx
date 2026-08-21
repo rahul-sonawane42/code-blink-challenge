@@ -105,8 +105,12 @@ function Index() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center px-4 py-12 md:px-8">
-      <div className="grid w-full max-w-6xl items-center gap-14 lg:grid-cols-[1.15fr_0.85fr]">
+    <main className="grid-lines flex min-h-screen flex-col items-center justify-center px-5 py-10 md:px-10 lg:py-16">
+      <div className="w-full max-w-7xl">
+        <div className="mb-12 flex items-center justify-between border-b border-border pb-4 font-mono text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
+          <span>SPPU ACM / Blind coding system</span><span className="flex items-center gap-2 text-signal"><span className="size-1.5 rounded-full bg-signal" /> System online</span>
+        </div>
+      <div className="grid w-full items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
         <div>
           <div className="flex items-center gap-5">
             <div className="animate-float rounded-2xl bg-card p-2 shadow-[0_12px_30px_-18px_oklch(0.72_0.15_185_/_0.3)] ring-1 ring-border">
@@ -126,7 +130,7 @@ function Index() {
             </p>
           </div>
 
-          <h1 className="mt-10 font-display text-6xl font-extrabold leading-[0.92] tracking-tight md:text-7xl">
+          <h1 className="mt-10 max-w-3xl font-display text-6xl font-extrabold leading-[0.88] tracking-[-0.06em] md:text-8xl">
             Blind coding
             <span className="block italic text-signal">arena.</span>
           </h1>
@@ -155,7 +159,7 @@ function Index() {
           </dl>
         </div>
 
-        <section className="rounded-3xl border border-border bg-card p-8 shadow-[0_30px_70px_-45px_oklch(0.72_0.15_185_/_0.15)]">
+        <section className="rounded-2xl border border-border bg-card/90 p-8 shadow-2xl shadow-black/20 ring-1 ring-white/5">
           <div className="flex items-center justify-between gap-4">
             <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-muted-foreground">
               Entry pass
@@ -206,6 +210,7 @@ function Index() {
       >
         I&apos;m running the show →
       </Link>
+      </div>
     </main>
   );
 }
